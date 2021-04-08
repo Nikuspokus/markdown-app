@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 
-import marked from "marked"
+import marked from "marked";
 
 import { sampleText } from "./sampleText";
 
@@ -10,12 +10,31 @@ class App extends Component {
     text: sampleText,
   };
 
-  handleChange = event => {
-    const text = event.target.value
-    this.setState({ text })
+  componentDidMount() {
+    const text = localStorage.getItem("text");
+    if (text) {
+      this.setState({ text });
+    } else {
+      this.setState({ text: sampleText });
+    }
   }
 
-  renderText = text => marked(text, { sanitize: true })
+  componentDidUpdate() {
+    const { text } = this.state;
+    //utilisation du localstorage
+    //setItem = permet d'enregistrer une donnee
+    localStorage.setItem("text", text);
+  }
+
+  handleChange = (event) => {
+    const text = event.target.value;
+    this.setState({ text });
+  };
+
+  renderText = (text) => {
+    const __html = marked(text, { sanitize: true });
+    return { __html };
+  };
 
   render() {
     return (
@@ -30,7 +49,9 @@ class App extends Component {
             ></textarea>
           </div>
           <div className="col-sm-6">
-            <div dangerouslySetInnerHTML={{ __html: this.renderText(this.state.text) }}></div>
+            <div
+              dangerouslySetInnerHTML={this.renderText(this.state.text)}
+            ></div>
           </div>
         </div>
       </div>
